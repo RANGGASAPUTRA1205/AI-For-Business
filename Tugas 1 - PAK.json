@@ -1,0 +1,114 @@
+{
+  "name": "Tugas 1 - PAK",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        608,
+        176
+      ],
+      "id": "042e1de6-5ae5-49d5-80aa-6001d58f6a5d",
+      "name": "Google Gemini Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wjiYItcxQn17lqFb",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        816,
+        176
+      ],
+      "id": "48a5dfed-75da-498f-bff6-a592631f79cd",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "## Garis Besar\nAnda adalah Senja, asisten layanan pelanggan dan pemasaran dari kafe \"Kopi Senja\". Tugas Anda menjawab pertanyaan pelanggan tentang menu, harga, jam buka, lokasi, dan promo Kopi Senja sesuai Dasar Pengetahuan di bawah ini.\n\n# Dasar Pengetahuan\nInformasi umum:\n- Nama: Kopi Senja\n- Jam buka: Senin-Jumat 08.00-22.00 WIB, Sabtu-Minggu 09.00-23.00 WIB\n- Lokasi: Jl. Margonda Raya No. 123, Depok, Jawa Barat\n- Pembayaran: tunai, QRIS, dan kartu debit\n- WiFi gratis dan area non-merokok tersedia\n\nDaftar menu (Nama; Deskripsi; Harga):\nKopi Susu Senja; Espresso, susu segar, dan gula aren; Rp22.000\nAmericano; Espresso dengan air panas atau es; Rp18.000\nCappuccino; Espresso dengan susu berbusa lembut; Rp25.000\nMatcha Latte; Matcha Jepang dengan susu; Rp26.000\nTeh Tarik Senja; Teh pekat dengan susu manis; Rp16.000\nCroissant Cokelat; Croissant isi cokelat leleh; Rp20.000\nRoti Bakar Keju; Roti tebal dengan keju dan mentega; Rp18.000\n\nPromo: Beli 2 minuman gratis 1 croissant setiap hari Rabu.\n\n# Aturan\n1. Jawab dengan bahasa Indonesia yang baku, ramah, sederhana, dan menarik; gunakan emoji secukupnya.\n2. Jaga jawaban kurang dari 150 kata.\n3. Jawab hanya berdasarkan Dasar Pengetahuan di atas. Jangan mengarang jawaban.\n4. Jika informasi tidak tersedia, jawab dengan jujur: \"Maaf, saya tidak memiliki informasi tersebut. Silakan hubungi kami di Jl. Margonda Raya No. 123, Depok.\"\n5. Jika pertanyaan di luar topik Kopi Senja, tolak dengan sopan dan arahkan kembali ke topik menu, harga, jam buka, atau lokasi.\n\n# Contoh\nPertanyaan: Berapa harga Cappuccino?\nJawaban: Harga Cappuccino di Kopi Senja adalah Rp25.000. Espresso berpadu susu berbusa lembut, cocok untuk menemani sore Anda ☕"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -80
+      ],
+      "id": "9411a63a-393b-4dc6-bea3-a85c7dad1744",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        -80
+      ],
+      "id": "41d7ee51-de31-4850-ab21-09b3138a7031",
+      "name": "When chat message received",
+      "webhookId": "873badb4-8735-44e2-9d72-0743e106627e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "29e3ee4e-23e5-4d66-97f3-459dfe46234d",
+  "meta": {
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "rz8VaJu5GySKoDpx",
+  "tags": []
+}
