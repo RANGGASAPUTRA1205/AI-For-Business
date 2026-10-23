@@ -1,0 +1,171 @@
+{
+  "name": "Tugaas 3 - PAK",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! Saya chatbot menu Kopi Roeang Santai. Tanyakan menu, deskripsi, atau harganya ya.",
+        "options": {
+          "inputPlaceholder": "Contoh: Berapa harga Kopi Susu Roeang?",
+          "showWelcomeScreen": false,
+          "subtitle": "Informasi menu dan harga",
+          "title": "Chatbot Kopi Roeang Santai",
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "cf600411-80ef-4fd5-adcf-fd6702eab7e3",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "d027cf9b-baad-42f2-9291-432a830ac5d5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "Kamu adalah asisten chatbot web untuk katalog menu Kopi Roeang Santai. Jawab pertanyaan pengguna tentang nama produk, kategori, deskripsi, harga, dan ketersediaan menu.\n\nATURAN WAJIB:\n1. Gunakan tool Google Sheets bernama 'Get row(s) in sheet in Google Sheets' untuk mengambil data katalog sebelum menjawab pertanyaan tentang produk atau harga.\n2. Sumber kebenaran hanya data Google Sheets. Jangan mengarang produk, harga, deskripsi, atau status ketersediaan.\n3. Jika produk tidak ditemukan dalam sheet, katakan bahwa produk tersebut belum tercantum di katalog.\n4. Tampilkan harga dalam format Rupiah, misalnya Rp18.000.\n5. Jawab dalam Bahasa Indonesia, ramah, ringkas, dan jelas. Jika diminta daftar menu, kelompokkan berdasarkan kategori.\n6. Kamu boleh menggunakan konteks percakapan sebelumnya untuk memahami pertanyaan lanjutan, tetapi informasi menu/harga tetap harus diperiksa melalui Google Sheets.\n7. Jangan menyatakan pesanan sudah dibuat atau dibayar karena chatbot ini hanya bertugas memberi informasi menu."
+        }
+      },
+      "id": "fcca4d90-f920-494a-8534-bfef3d34b33e",
+      "name": "AI Agent - Info Menu",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "09751481-bf0b-4c61-ade3-f84a167036e8",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        240
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wjiYItcxQn17lqFb",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "d9431119-7136-460f-a275-6260fd324fa1",
+      "name": "Conversation Memory - 5",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Ambil seluruh baris data menu Kopi Roeang Santai dari tab Menu. Data berisi Kode, Nama_Produk, Kategori, Deskripsi, Harga_Rp, dan Ketersediaan. Wajib gunakan tool ini sebelum menjawab pertanyaan nama menu, kategori, deskripsi, harga, atau ketersediaan. Jangan menebak harga.",
+        "documentId": {
+          "__rl": true,
+          "value": "175FZkLefGx4oZ_wX9Uu8n2EjawnWVTEdRja55ROp_lg",
+          "mode": "list",
+          "cachedResultName": "Data_Menu_Kopi_Roeang_Santai",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/175FZkLefGx4oZ_wX9Uu8n2EjawnWVTEdRja55ROp_lg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1594932416,
+          "mode": "list",
+          "cachedResultName": "Menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/175FZkLefGx4oZ_wX9Uu8n2EjawnWVTEdRja55ROp_lg/edit#gid=1594932416"
+        },
+        "options": {}
+      },
+      "id": "f716a809-e5dd-4744-b836-add2e3aeb663",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "bhPI8l58MMwINYcf",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Info Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Info Menu",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory - 5": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent - Info Menu",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent - Info Menu",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0eb369e5-baae-47df-978b-59aadb20ed7d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "Yn8uIrPjnyhEG2mI",
+  "tags": []
+}
